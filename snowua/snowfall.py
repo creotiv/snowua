@@ -21,24 +21,24 @@ def draw_tree(stdscr):
 
     # ASCII art for the Christmas tree
     tree = [
-        "              .              ",
+        "              @              ",
         "             ***             ",
-        "            *.*.*            ",
-        "           .**.**.           ",
-        "          *.***.**.          ",
-        "         *.**.***.**         ",
-        "        .*.***.**.**.        ",
-        "       *.**.**.**.**.*       ",
+        "            *@*@*            ",
+        "           @**@**@           ",
+        "          *@***@**@          ",
+        "         *@**@***@**         ",
+        "        @*@***@**@**@        ",
+        "       *@**@**@**@**@*       ",
         "             |||             ",
         "             |||             ",
         "                             ",
         "     З Новим 2024 Роком      ",
-        "       Слава Україні!        "
+        "       Слава Україні!        ",
+        "         //uah.fund          "
     ]
     tree_height = len(tree)
     tree_width = max(len(line) for line in tree)
 
-    # Calculate starting position
     start_y = height // 2 - tree_height // 2
     start_x = width // 2 - tree_width // 2
 
@@ -47,7 +47,7 @@ def draw_tree(stdscr):
         for j, char in enumerate(line):
             if char == '*':
                 stdscr.addch(start_y + i, start_x + j, char, curses.color_pair(3))
-            elif char == '.':
+            elif char == '@':
                 color = random.choice([2, 10, 6, 7])  # Randomly choose a color for ornaments
                 stdscr.addch(start_y + i, start_x + j, "*", curses.color_pair(color))
             elif char == '|':
@@ -57,17 +57,18 @@ def draw_tree(stdscr):
 
 
 def main(stdscr):
-    curses.curs_set(0)  # Hide cursor
-    curses.mousemask(1)  # Enable mouse events
+    curses.curs_set(0)  
     curses.start_color()
     curses.use_default_colors()
     for i in range(0, curses.COLORS):
         curses.init_pair(i + 1, i, -1)
 
-    stdscr.nodelay(1)  # Don't block for user input
+    stdscr.nodelay(1)  
     height, width = stdscr.getmaxyx()
 
     snowflakes = ['.', '*', '+']
+
+    total_flakes = height*width // 60
     
     # Initialize snowflakes with properties
     flakes = [{'orig_x': random.randint(0, width - 2),
@@ -75,8 +76,8 @@ def main(stdscr):
                'char': random.choice(snowflakes),
                'speed': random.uniform(0.6, 0.9),
                'angle': random.uniform(0, 2 * math.pi),
-               'offset': 0}  # Initialize the offset
-              for _ in range(200)]
+               'offset': 0} 
+              for _ in range(total_flakes)]
 
     def update_snowflakes():
         for flake in flakes:
@@ -95,11 +96,13 @@ def main(stdscr):
 
             # Draw the snowflake at the new position
             try:
-                stdscr.addch(int(flake['y']), int(flake['orig_x'] + flake['offset']), flake['char'], curses.A_DIM)
+                stdscr.addch(
+                    int(flake['y']), int(flake['orig_x'] + flake['offset']), 
+                    flake['char'], curses.A_DIM)
             except curses.error:
                 pass
 
-    # Main loop to draw the snow
+    # Main loop
     try:
         while True:
             draw_background(stdscr)
@@ -112,8 +115,11 @@ def main(stdscr):
             if stdscr.getch() != curses.ERR:
                 break
     finally:
-        curses.curs_set(1)  # Show cursor
+        curses.curs_set(1)
 
 
 def run():
     curses.wrapper(main)
+
+if __name__ == "__main__":
+    run()
